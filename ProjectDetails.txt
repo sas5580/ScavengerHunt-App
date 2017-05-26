@@ -1,0 +1,45 @@
+Project:
+
+-Server
+	-HTTP request 
+	-Data:
+		-games
+			-players
+				-name
+				-location
+			-checklists
+				-description
+				-location
+				-player id of those completed / picture
+
+
+
+
+-Android
+	-player's UI
+	-hold information until game 'starts'; ie waiting screen
+	-join game through code
+		-view players 
+	-map-view
+		-location of check points
+	-checkpoint-view
+		-description/detail of checkpoints
+		-picture
+
+	-services:
+		-location
+		-camera
+		-wifi/data: out of wifi range issues
+
+-Web
+	-setting up the game
+		-code for playerbase to join
+		-enabling checkpoints
+			-location
+			-description
+	-keeping score
+		-time
+		-checklist
+		-instataneous map
+	-verification
+		-picture
