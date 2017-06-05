@@ -1,10 +1,8 @@
 from flask import jsonify, make_response
+from flask_socketio import emit
 from app import app, socketio, Game, Objective, Player
 
-@app.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
-
-@socketio.on('connect', namespace='/test')
+@socketio.on('test')
 def test_connect():
-    emit('my response', {'data': 'Connected'})
+    print "TEST"
+    socketio.emit('my_response', {'data': 'TEST'})

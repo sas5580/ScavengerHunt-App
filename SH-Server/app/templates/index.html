@@ -1,0 +1,16 @@
+<head>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.2/socket.io.js"></script>
+    <script type="text/javascript">
+        const ws = io.connect('ws://127.0.0.1:5000');
+        //ws.send(JSON.stringify("connect"));
+
+        ws.on('connect', function() {
+            ws.emit('my_event', {data: 'I\'m connected!'});
+        });
+
+        ws.onmessage = function (evt) { 
+            console.log("MESSAGE");
+            console.log(evt.data);
+        }
+    </script>
+</head>
