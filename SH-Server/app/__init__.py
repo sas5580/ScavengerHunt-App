@@ -8,6 +8,6 @@ from .library.Objective import Objective
 from .library.Player import Player
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode = "threading")
 from app import views
 from app import request

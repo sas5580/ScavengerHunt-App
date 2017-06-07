@@ -5,7 +5,7 @@
         //ws.send(JSON.stringify("connect"));
 
         ws.on('connect', function() {
-            ws.emit('my_event', {data: "I'm connected!"});
+            ws.emit('get_game_info', {data: "I'm connected!", game: 100});
             console.log("i'm connected!");
         });
 
@@ -13,9 +13,9 @@
             console.log('penis');
         });
 
-        ws.onmessage = function (evt) { 
-            console.log("MESSAGE");
-            console.log(evt.data);
-        }
+        ws.on('game_info', function(message){
+            console.log('get_game_info');
+            console.log(message);
+        });
     </script>
 </head>
