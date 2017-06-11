@@ -1,7 +1,9 @@
-package com.yan.sh.sh_android;
+package com.yan.sh.sh_android.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.yan.sh.sh_android.R;
 
 public class MainActivity extends AppCompatActivity {
 
