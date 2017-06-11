@@ -92,5 +92,6 @@ public class Engine {
 
     private void instanceShutdown(){
         started = false;
+        //shutdown managers and set to null
     }
 }

@@ -6,6 +6,8 @@ import android.os.IBinder;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 
+import com.yan.sh.sh_android.engine.Engine;
+
 import timber.log.Timber;
 
 /**
@@ -22,6 +24,7 @@ public class ScavengerHuntService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Timber.i("Start SH Services - Initialize Engine");
+        Engine.startup();
         return super.onStartCommand(intent, flags, startId);
     }
 }
