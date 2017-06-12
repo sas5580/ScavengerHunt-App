@@ -1,6 +1,7 @@
 import time
 from Player import Player
 from Objective import Objective
+import json
 
 class Game:
 
@@ -14,6 +15,8 @@ class Game:
         self.started = False
         self.startTime = None
         
+    def serialize(self):
+    	return {'started': started}
         
         
     

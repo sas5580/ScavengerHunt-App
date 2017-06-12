@@ -6,12 +6,18 @@
 
         ws.on('connect', function() {
             console.log("CONNECTED")
-            ws.emit('test', {'data': 'I\'m connected!'});
+            ws.emit('get_game_info', {data: "I'm connected!", game: 100});
         });
 
-        ws.onmessage
-
         ws.on('my_response', function (message) {
+            console.log(message);
+        });
+        ws.on('penis', function(){
+            console.log('penis');
+        });
+
+        ws.on('game_info', function(message){
+            console.log('get_game_info');
             console.log(message);
         });
     </script>
