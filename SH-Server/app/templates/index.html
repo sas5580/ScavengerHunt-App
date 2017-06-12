@@ -5,12 +5,14 @@
         //ws.send(JSON.stringify("connect"));
 
         ws.on('connect', function() {
-            ws.emit('my_event', {data: 'I\'m connected!'});
+            console.log("CONNECTED")
+            ws.emit('test', {'data': 'I\'m connected!'});
         });
 
-        ws.onmessage = function (evt) { 
-            console.log("MESSAGE");
-            console.log(evt.data);
-        }
+        ws.onmessage
+
+        ws.on('my_response', function (message) {
+            console.log(message);
+        });
     </script>
 </head>
