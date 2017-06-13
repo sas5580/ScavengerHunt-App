@@ -24,7 +24,7 @@ public class ScavengerHuntService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Timber.i("Start SH Services - Initialize Engine");
-        Engine.startup();
+        Engine.startup(getApplicationContext());
         return super.onStartCommand(intent, flags, startId);
     }
 }

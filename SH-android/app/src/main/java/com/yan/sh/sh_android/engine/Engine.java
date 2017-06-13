@@ -1,5 +1,7 @@
 package com.yan.sh.sh_android.engine;
 
+import android.content.Context;
+
 import com.yan.sh.sh_android.engine.managers.DataManager;
 import com.yan.sh.sh_android.engine.managers.GameManager;
 import com.yan.sh.sh_android.engine.managers.HardwareManager;
@@ -31,8 +33,8 @@ public class Engine {
         return sharedInstance;
     }
 
-    public static void startup(){
-        Engine.instance().instanceStartup();
+    public static void startup(Context context){
+        Engine.instance().instanceStartup(context);
     }
 
     public static void shutdown(){
@@ -64,7 +66,7 @@ public class Engine {
         return Engine.instance().user;
     }
 
-    private void instanceStartup(){
+    private void instanceStartup(Context context){
         if(started){
             return;
         }
@@ -77,7 +79,7 @@ public class Engine {
             game = new GameManager();
         }
         if(hardware == null) {
-            hardware = new HardwareManager();
+            hardware = new HardwareManager(context);
         }
         if(network == null) {
             network = new NetworkManager();
