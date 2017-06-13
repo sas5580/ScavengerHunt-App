@@ -5,5 +5,8 @@ package com.yan.sh.sh_android.engine.managers;
  * Tracks connectivity status of the device
  */
 
-public class HardwareManager {
+public class HardwareManager extends Manager{
+    public HardwareManager(){
+        this.startup();
+    }
 }

@@ -5,5 +5,8 @@ package com.yan.sh.sh_android.engine.managers;
  * Handles requests to the server
  */
 
-public class NetworkManager {
+public class NetworkManager extends Manager {
+    public NetworkManager(){
+        this.startup();
+    }
 }

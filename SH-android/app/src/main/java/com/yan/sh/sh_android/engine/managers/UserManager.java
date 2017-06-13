@@ -14,7 +14,7 @@ public class UserManager extends Manager {
     private UUID uuid;
     private UUID currentSession;
 
-    public void UserManager(){
+    public UserManager(){
         this.startup();
         connectedToGame = false;
         userInitialized = false;

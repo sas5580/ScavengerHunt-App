@@ -91,7 +91,27 @@ public class Engine {
     }
 
     private void instanceShutdown(){
+        if(!started){
+            return;
+        }
         started = false;
-        //shutdown managers and set to null
+        //shutdown managers
+        data.shutdown();
+        data = null;
+
+        game.shutdown();
+        game = null;
+
+        hardware.shutdown();
+        hardware = null;
+
+        network.shutdown();
+        network = null;
+
+        socket.shutdown();
+        socket = null;
+
+        user.shutdown();
+        user = null;
     }
 }

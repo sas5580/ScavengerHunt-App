@@ -5,5 +5,8 @@ package com.yan.sh.sh_android.engine.managers;
  * Handles data storage and persistance
  */
 
-public class DataManager {
+public class DataManager extends Manager{
+    public DataManager(){
+        this.startup();
+    }
 }
