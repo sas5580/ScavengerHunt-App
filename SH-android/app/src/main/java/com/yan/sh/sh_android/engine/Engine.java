@@ -6,6 +6,7 @@ import com.yan.sh.sh_android.engine.managers.DataManager;
 import com.yan.sh.sh_android.engine.managers.GameManager;
 import com.yan.sh.sh_android.engine.managers.HardwareManager;
 import com.yan.sh.sh_android.engine.managers.NetworkManager;
+import com.yan.sh.sh_android.engine.managers.ObjectiveManager;
 import com.yan.sh.sh_android.engine.managers.SocketManager;
 import com.yan.sh.sh_android.engine.managers.UserManager;
 
@@ -22,6 +23,7 @@ public class Engine {
     private NetworkManager network;
     private SocketManager socket;
     private UserManager user;
+    private ObjectiveManager objective;
 
     private boolean started = false;
 
@@ -66,6 +68,8 @@ public class Engine {
         return Engine.instance().user;
     }
 
+    public static ObjectiveManager objective() { return Engine.instance().objective; }
+
     private void instanceStartup(Context context){
         if(started){
             return;
@@ -89,6 +93,9 @@ public class Engine {
         }
         if(user == null){
             user = new UserManager();
+        }
+        if(objective == null){
+            objective = new ObjectiveManager();
         }
     }
 
@@ -115,5 +122,8 @@ public class Engine {
 
         user.shutdown();
         user = null;
+
+        objective.shutdown();
+        objective = null;
     }
 }
