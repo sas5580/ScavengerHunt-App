@@ -55,8 +55,9 @@ public class SocketManager extends Manager {
         });
     }
 
+    //send completed objective to
     public boolean sendSocketMessage(final String message){
-        if(webSocket == null)
+        if(webSocket == null || message == null)
             return false;
         if(serialQueue != null){
             serialQueue.execute(new Runnable() {

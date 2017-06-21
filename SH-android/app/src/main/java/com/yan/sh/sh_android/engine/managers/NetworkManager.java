@@ -9,4 +9,9 @@ public class NetworkManager extends Manager {
     public NetworkManager(){
         this.startup();
     }
+
+    //TODO on Engine restarts or on initialization, gets data from infrastructure
+    //TODO requests game stats
+
+    //TODO : request to server to grab data from infrastructure
 }

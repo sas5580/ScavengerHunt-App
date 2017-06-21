@@ -8,4 +8,6 @@ public class GameManager extends Manager {
     public GameManager(){
         this.startup();
     }
+
+    //TODO: refactor objective and user into objects
 }

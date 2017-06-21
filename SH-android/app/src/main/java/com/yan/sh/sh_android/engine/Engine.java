@@ -77,7 +77,7 @@ public class Engine {
         started = true;
 
         if(data == null) {
-            data = new DataManager();
+            data = new DataManager(context);
         }
         if(game == null){
             game = new GameManager();
