@@ -1,6 +1,7 @@
 package com.yan.sh.sh_android.ui;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -20,6 +21,15 @@ public class MainActivity extends AppCompatActivity {
 
         Intent serviceIntent = new Intent(this, ScavengerHuntService.class);
         startService(serviceIntent);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(loginIntent);
+                finish();
+            }
+        }, 3000);
     }
 
 }

@@ -153,12 +153,12 @@ public class DataManager extends Manager{
         editor.commit();
     }
 
-    public void saveGameData(int id){
+    public void saveGameData(String id){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences("game", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.clear();
-        editor.putInt("id", id);
+        editor.putString("id", id);
         editor.commit();
     }
 
@@ -172,8 +172,8 @@ public class DataManager extends Manager{
         return sharedPreferences.getString("name", "");
     }
 
-    public int getGameData(){
+    public String getGameData(){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences("game", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt("id", -1);
+        return sharedPreferences.getString("id", "");
     }
 }

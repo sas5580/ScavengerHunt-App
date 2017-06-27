@@ -1,6 +1,7 @@
 package com.yan.sh.sh_android.engine.managers;
 
 import android.content.Context;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -21,6 +22,7 @@ public class HardwareManager extends Manager{
 
     Context mContext;
     private static boolean canPingGoogle;
+    private static boolean locationEnabled;
     private static final ExecutorService userQueue = Executors.newCachedThreadPool();
 
     public HardwareManager(Context context){
@@ -31,6 +33,8 @@ public class HardwareManager extends Manager{
             Timber.i("internet available");
             hasActiveInternetConnection();
         }
+
+        isLocationEnabled();
     }
 
     private boolean internetAvailable(Context context){
@@ -62,5 +66,11 @@ public class HardwareManager extends Manager{
 
     public boolean hasNetworkAccess(){
         return canPingGoogle;
+    }
+
+    public boolean isLocationEnabled(){
+        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        locationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return locationEnabled;
     }
 }

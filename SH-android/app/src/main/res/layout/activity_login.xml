@@ -1,9 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.yan.sh.sh_android.ui.LoginActivity">
+    tools:context="com.yan.sh.sh_android.ui.LoginActivity"
+    android:orientation="vertical"
+    android:gravity="center">
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Join Game: "/>
+        <EditText
+            android:id="@+id/et_game_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Game Code"/>
+        <Button
+            android:id="@+id/bt_join_game"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Join"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/bt_join_last_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Return to last game"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_wifi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_wifi_black_24dp"/>
+
+        <ImageView
+            android:id="@+id/iv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_location_on_black_24dp"/>
+    </LinearLayout>
+
+</LinearLayout>
