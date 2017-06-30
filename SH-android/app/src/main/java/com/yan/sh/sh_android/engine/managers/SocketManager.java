@@ -17,6 +17,8 @@ import timber.log.Timber;
 
 public class SocketManager extends Manager {
 
+    final private String domain = "https://glacial-garden-48114.herokuapp.com/";
+
     public final class SocketListener extends WebSocketListener{
         @Override
         public void onOpen(WebSocket webSocket, Response response) {

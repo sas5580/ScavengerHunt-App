@@ -21,7 +21,7 @@ import timber.log.Timber;
 public class NetworkManager extends Manager {
 
     private OkHttpClient client;
-    private String domain;
+    final private String domain = "https://glacial-garden-48114.herokuapp.com/";
 
     public NetworkManager(){
         this.startup();
@@ -30,15 +30,9 @@ public class NetworkManager extends Manager {
 
     public void getGameData(String gameCode, Callback callback){
         Request request = new Request.Builder()
-                                .url("https://glacial-garden-48114.herokuapp.com/api/game_data/" + gameCode)
+                                .url(domain + "api/game_data/" + gameCode)
                                 .build();
 
         client.newCall(request).enqueue(callback);
     }
-
-
-    //TODO on Engine restarts or on initialization, gets data from infrastructure
-    //TODO requests game stats
-
-    //TODO : request to server to grab data from infrastructure
 }

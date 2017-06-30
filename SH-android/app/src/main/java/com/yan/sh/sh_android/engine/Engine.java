@@ -2,6 +2,7 @@ package com.yan.sh.sh_android.engine;
 
 import android.content.Context;
 
+import com.yan.sh.sh_android.engine.managers.BroadcastManager;
 import com.yan.sh.sh_android.engine.managers.DataManager;
 import com.yan.sh.sh_android.engine.managers.GameManager;
 import com.yan.sh.sh_android.engine.managers.HardwareManager;
@@ -24,6 +25,7 @@ public class Engine {
     private SocketManager socket;
     private UserManager user;
     private ObjectiveManager objective;
+    private BroadcastManager broadcast;
 
     private boolean started = false;
 
@@ -70,12 +72,17 @@ public class Engine {
 
     public static ObjectiveManager objective() { return Engine.instance().objective; }
 
+    public static BroadcastManager broadcast() { return Engine.instance().broadcast; }
+
     private void instanceStartup(Context context){
         if(started){
             return;
         }
         started = true;
 
+        if(broadcast == null){
+            broadcast = new BroadcastManager();
+        }
         if(data == null) {
             data = new DataManager(context);
         }
@@ -104,6 +111,10 @@ public class Engine {
             return;
         }
         started = false;
+
+        broadcast.shutdown();
+        broadcast = null;
+
         //shutdown managers
         data.shutdown();
         data = null;
@@ -125,5 +136,23 @@ public class Engine {
 
         objective.shutdown();
         objective = null;
+    }
+
+    public static boolean managersInitialized(){
+        if(Engine.instance() == null) {
+            return false;
+        }
+
+        if(     Engine.instance().broadcast != null && Engine.instance().broadcast.isStarted()&&
+                Engine.instance().data != null      && Engine.instance().data.isStarted()     &&
+                Engine.instance().game != null      && Engine.instance().game.isStarted()     &&
+                Engine.instance().hardware != null  && Engine.instance().hardware.isStarted() &&
+                Engine.instance().network != null   && Engine.instance().network.isStarted()  &&
+                Engine.instance().socket != null    && Engine.instance().socket.isStarted()   &&
+                Engine.instance().user != null      && Engine.instance().user.isStarted()     &&
+                Engine.instance().objective != null && Engine.instance().objective.isStarted()) {
+            return true;
+        }
+        return false;
     }
 }

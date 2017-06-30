@@ -1,10 +1,13 @@
 package com.yan.sh.sh_android.engine.managers;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -19,7 +22,6 @@ import timber.log.Timber;
  */
 
 public class HardwareManager extends Manager{
-
     Context mContext;
     private static boolean canPingGoogle;
     private static boolean locationEnabled;
@@ -54,12 +56,16 @@ public class HardwareManager extends Manager{
                     urlConnection.setRequestProperty("Connection", "close");
                     urlConnection.setConnectTimeout(5000);
                     urlConnection.connect();
-                    if(urlConnection.getResponseCode() == 200)
+                    if(urlConnection.getResponseCode() == 200) {
                         canPingGoogle = true;
+                    } else {
+                        canPingGoogle = false;
+                    }
                 }catch(Exception ex){
                     Timber.e(ex, "Error pinging google");
                     canPingGoogle = false;
                 }
+                onNetworkChange();
             }
         });
     }
@@ -70,7 +76,40 @@ public class HardwareManager extends Manager{
 
     public boolean isLocationEnabled(){
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-        locationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if(locationEnabled != locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            locationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            onLocationChange();
+        }
         return locationEnabled;
     }
+
+    private void onNetworkChange(){
+        Intent networkChange = new Intent();
+        networkChange.setAction("NETWORK_CHANGE");
+
+        //send local broadcast here
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(mContext);
+        localBroadcastManager.sendBroadcast(networkChange);
+    }
+
+    private void onLocationChange(){
+        Intent locationChange = new Intent();
+        locationChange.setAction("LOCATION_CHANGE");
+
+        //send local broadcast
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(mContext);
+        localBroadcastManager.sendBroadcast(locationChange);
+    }
+
+    public void checkInternet(){
+        if(internetAvailable(mContext)){
+            hasActiveInternetConnection();
+        } else {
+            canPingGoogle = false;
+            onNetworkChange();
+        }
+    }
+
+
+
 }

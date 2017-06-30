@@ -74,11 +74,11 @@ public class DataManager extends Manager{
     private SQLiteDatabase mDbRead;
 
     public DataManager(Context context){
-        this.startup();
         mContext = context;
         GameDataDBHelper gameDataDBHelper = new GameDataDBHelper(mContext);
         mDbWrite = gameDataDBHelper.getWritableDatabase();
         mDbRead = gameDataDBHelper.getReadableDatabase();
+        this.startup();
     }
 
     public long recordObjective(int objectiveId, String objectiveTimeStamp, String pictureUrl, int gameId, int userId){

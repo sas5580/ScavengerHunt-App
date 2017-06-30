@@ -36,10 +36,20 @@ public class GameManager extends Manager {
                 try{
                     gameData = new JSONObject(response.body().string());
                     Timber.i(gameData.toString());
+                    storeGameData();
                 } catch (JSONException ex){
                     Timber.e(ex, "Json error!");
                 }
             }
         });
+    }
+
+    private void storeGameData(){
+        if(gameData == null)
+            return;
+
+        JSONObject objectiveData = null;
+        //store game data
+        Engine.objective().loadObjectives(objectiveData);
     }
 }

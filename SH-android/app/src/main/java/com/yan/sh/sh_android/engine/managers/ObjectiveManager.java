@@ -2,6 +2,8 @@ package com.yan.sh.sh_android.engine.managers;
 
 import com.yan.sh.sh_android.engine.objects.Objective;
 
+import org.json.JSONObject;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,5 +20,9 @@ public class ObjectiveManager extends Manager {
     public ObjectiveManager(){
         this.startup();
         userObjectives = new ArrayList<>();
+    }
+
+    public void loadObjectives(JSONObject objectives){
+
     }
 }

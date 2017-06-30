@@ -5,4 +5,8 @@ package com.yan.sh.sh_android.engine.objects;
  */
 
 public class Objective {
+
+    public Objective(){
+
+    }
 }
