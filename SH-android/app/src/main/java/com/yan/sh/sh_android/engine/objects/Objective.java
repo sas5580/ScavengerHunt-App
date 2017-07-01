@@ -13,6 +13,6 @@ public class Objective {
     private String description;
 
     public Objective(JSONObject object){
-
+        //TODO: test with fake data
     }
 }

@@ -4,19 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     tools:context="com.yan.sh.sh_android.ui.DashboardActivity">
+
 
     <!--  Map here -->
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="DANK"
+        android:textColor="@android:color/black"/>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-       <TextView
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           android:text="DANK"/>
+
+        <!-- Recycler here -->
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v7.widget.RecyclerView>
 
     </ScrollView>
 

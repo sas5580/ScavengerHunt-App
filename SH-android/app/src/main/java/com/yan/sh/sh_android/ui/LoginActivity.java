@@ -153,6 +153,8 @@ public class LoginActivity extends AppCompatActivity {
                     JSONObject gameData = new JSONObject();//response.body().string());
                     gameData.put("data", "test data");
 
+                    //TODO : add more fake data
+
                     //do validation here
                     if(gameData.has("data")){
                         Engine.game().storeGameData(gameData);
