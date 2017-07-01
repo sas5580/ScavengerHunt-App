@@ -1,7 +1,9 @@
 package com.yan.sh.sh_android.engine.managers;
 
 import com.yan.sh.sh_android.engine.Engine;
+import com.yan.sh.sh_android.ui.LoginActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,38 +20,33 @@ import timber.log.Timber;
 
 public class GameManager extends Manager {
 
-    private JSONObject gameData;
+    private boolean initalized;
+    private String startTime;
+    private Integer gameId;
+
     public GameManager(){
         this.startup();
     }
 
-    public void initializeGame(String gameCode){
+    public void storeGameData(JSONObject data){
+        if(data == null){
+            return;
+        }
 
-        Engine.network().getGameData(gameCode, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Timber.e("Error getting game data!");
-            }
+        try{
+            gameId = data.getInt("gameId");
+            startTime = data.getString("startTime");
+            JSONArray objectives = data.getJSONArray("objectives");
+            Engine.objective().loadObjectives(objectives);
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try{
-                    gameData = new JSONObject(response.body().string());
-                    Timber.i(gameData.toString());
-                    storeGameData();
-                } catch (JSONException ex){
-                    Timber.e(ex, "Json error!");
-                }
-            }
-        });
+            initalized = true;
+
+        }catch(JSONException ex){
+            Timber.e(ex, "Json error");
+        }
     }
 
-    private void storeGameData(){
-        if(gameData == null)
-            return;
-
-        JSONObject objectiveData = null;
-        //store game data
-        Engine.objective().loadObjectives(objectiveData);
+    public boolean initialized(){
+        return initalized;
     }
 }

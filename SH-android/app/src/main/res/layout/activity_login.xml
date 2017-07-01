@@ -9,36 +9,34 @@
     android:gravity="center">
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/logo"/>
+        android:adjustViewBounds="true"
+        android:src="@drawable/logo"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/et_game_code"
+        style="@android:style/Widget.Holo.Light.EditText"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Join Game: "/>
-        <EditText
-            android:id="@+id/et_game_code"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Game Code"/>
-        <Button
-            android:id="@+id/bt_join_game"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Join"/>
-    </LinearLayout>
-
+        android:gravity="center"
+        android:hint="4-Digit Game Code"
+        android:inputType="textCapCharacters"
+        android:selectAllOnFocus="false" />
+    <Button
+        android:id="@+id/bt_join_game"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Join new game"
+        android:layout_marginBottom="30dp"/>
     <Button
         android:id="@+id/bt_join_last_game"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Return to last game"/>
+        android:text="Return to last game"
+        android:layout_marginBottom="30dp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -49,12 +47,15 @@
             android:id="@+id/iv_wifi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_wifi_black_24dp"/>
+            android:src="@drawable/ic_wifi_black_24dp"
+            android:tint="#4286f4"
+            android:layout_marginRight="20dp"/>
 
         <ImageView
             android:id="@+id/iv_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:tint="#4286f4"
             android:src="@drawable/ic_location_on_black_24dp"/>
     </LinearLayout>
 

@@ -1,10 +1,12 @@
 package com.yan.sh.sh_android.ui;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +21,14 @@ import com.yan.sh.sh_android.engine.Engine;
 import com.yan.sh.sh_android.services.ScavengerHuntService;
 import com.yan.sh.sh_android.util.TimberTree;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 import timber.log.Timber;
 
 public class LoginActivity extends AppCompatActivity {
@@ -96,9 +106,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void refreshLoginUI(){
         if(Engine.data().getGameData().equals("")) {
-            returnToLastGame.setVisibility(View.INVISIBLE);
+            returnToLastGame.setEnabled(false);
         } else {
-            returnToLastGame.setVisibility(View.VISIBLE);
+            returnToLastGame.setEnabled(true);
         }
 
         if(!Engine.hardware().hasNetworkAccess()) {
@@ -112,6 +122,12 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             location.setVisibility(View.VISIBLE);
         }
+
+        if(!Engine.hardware().isLocationEnabled() || !Engine.hardware().hasNetworkAccess()){
+            joinGame.setEnabled(false);
+        } else {
+            joinGame.setEnabled(true);
+        }
     }
 
     public void onJoinGameClick(){
@@ -123,6 +139,56 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onJoinGame(String gameCode){
-        Engine.game().initializeGame(gameCode);
+        Engine.network().getGameData(gameCode, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Timber.e("Error getting game data!");
+                onInitializationError();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try{
+                    //do some validation, make sure a valid game data gets sent
+                    JSONObject gameData = new JSONObject();//response.body().string());
+                    gameData.put("data", "test data");
+
+                    //do validation here
+                    if(gameData.has("data")){
+                        Engine.game().storeGameData(gameData);
+                        onInitializationSuccess();
+                    } else {
+                        onInitializationError();
+                    }
+                } catch (JSONException ex){
+                    Timber.e(ex, "Json error!");
+                    onInitializationError();
+                }
+            }
+        });
+    }
+
+    public void onInitializationError(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Timber.i("on error");
+                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                builder.setTitle("Error");
+                builder.setMessage("Game does not exist!");
+                builder.create().show();
+            }
+        });
+
+    }
+
+    public void onInitializationSuccess(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
