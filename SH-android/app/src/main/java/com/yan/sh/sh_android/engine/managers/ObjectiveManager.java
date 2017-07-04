@@ -38,4 +38,8 @@ public class ObjectiveManager extends Manager {
             }
         }
     }
+
+    public ArrayList<Objective> getObjectives(){
+        return userObjectives;
+    }
 }

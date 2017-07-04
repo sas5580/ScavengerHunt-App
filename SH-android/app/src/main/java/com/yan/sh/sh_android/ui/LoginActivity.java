@@ -76,6 +76,17 @@ public class LoginActivity extends AppCompatActivity {
         checkEngineInitialization();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try{
+            refreshLoginUI();
+        } catch (Exception ex) {
+            Timber.e("Engine not initialized");
+        }
+
+    }
+
     BroadcastReceiver onNetworkChange = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -138,7 +149,7 @@ public class LoginActivity extends AppCompatActivity {
         onJoinGame(Engine.data().getGameData());
     }
 
-    public void onJoinGame(String gameCode){
+    public void onJoinGame(final String gameCode){
         Engine.network().getGameData(gameCode, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -150,14 +161,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 try{
                     //do some validation, make sure a valid game data gets sent
-                    JSONObject gameData = new JSONObject();//response.body().string());
-                    gameData.put("data", "test data");
-
-                    //TODO : add more fake data
+                    JSONObject gameData = new JSONObject(response.body().string());
 
                     //do validation here
-                    if(gameData.has("data")){
-                        Engine.game().storeGameData(gameData);
+                    if(gameData.has("status") && gameData.getInt("status") == 200 && gameData.has("data")){
+                        Engine.game().storeGameData(gameData, gameCode);
                         onInitializationSuccess();
                     } else {
                         onInitializationError();

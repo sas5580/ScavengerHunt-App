@@ -22,25 +22,24 @@ public class GameManager extends Manager {
 
     private boolean initalized;
     private String startTime;
-    private Integer gameId;
+    private String gameCode;
 
     public GameManager(){
         this.startup();
     }
 
-    public void storeGameData(JSONObject data){
+    public void storeGameData(JSONObject data, String newGameCode){
         if(data == null){
             return;
         }
 
+        gameCode = newGameCode;
+
         try{
-            gameId = data.getInt("gameId");
-            startTime = data.getString("startTime");
-            JSONArray objectives = data.getJSONArray("objectives");
+            JSONArray objectives = data.getJSONArray("data");
             Engine.objective().loadObjectives(objectives);
-
             initalized = true;
-
+            Engine.data().saveGameData(gameCode);
         }catch(JSONException ex){
             Timber.e(ex, "Json error");
         }

@@ -2,11 +2,15 @@ package com.yan.sh.sh_android.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.yan.sh.sh_android.R;
+import com.yan.sh.sh_android.engine.Engine;
+import com.yan.sh.sh_android.ui.ObjectiveScrollView.ObjectiveAdapter;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -16,7 +20,15 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
 
         //TODO : get user fragment if user has not been initialized
-        //TODO : inflate recycler view
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_objective);
+        recyclerView.setHasFixedSize(true);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        ObjectiveAdapter objectiveAdapter = new ObjectiveAdapter(this, Engine.objective().getObjectives());
+        recyclerView.setAdapter(objectiveAdapter);
     }
 
     @Override

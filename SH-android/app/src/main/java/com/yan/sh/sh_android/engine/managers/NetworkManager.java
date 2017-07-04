@@ -21,7 +21,7 @@ import timber.log.Timber;
 public class NetworkManager extends Manager {
 
     private OkHttpClient client;
-    final private String domain = "https://glacial-garden-48114.herokuapp.com/";
+        final private String domain = "https://glacial-garden-48114.herokuapp.com/";
 
     public NetworkManager(){
         this.startup();
@@ -30,7 +30,7 @@ public class NetworkManager extends Manager {
 
     public void getGameData(String gameCode, Callback callback){
         Request request = new Request.Builder()
-                                .url(domain + "api/game_data/" + gameCode)
+                                .url(domain + "api/game_info/?game_id=" + gameCode)
                                 .build();
 
         client.newCall(request).enqueue(callback);
