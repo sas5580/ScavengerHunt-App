@@ -4,19 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="#eaf1f2"
     android:orientation="vertical"
     tools:context="com.yan.sh.sh_android.ui.DashboardActivity">
 
-
-    <!--  Map here -->
-
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="DANK"
-        android:textColor="@android:color/black"/>
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_margin="5dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp">
+        <TextView
+            android:textColor="@color/cardview_dark_background"
+            android:id="@+id/tv_time_remaining"
+            android:maxLines = "1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time Remaining: XX:XX"
+            android:textSize="28dp"
+            android:textStyle="bold"
+            android:paddingBottom="20dp"/>
 
+        <TextView
+            android:textColor="@color/cardview_dark_background"
+            android:id="@+id/tv_objectives_remaining"
+            android:maxLines = "1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Objectives Remaining: "
+            android:textSize="28dp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">

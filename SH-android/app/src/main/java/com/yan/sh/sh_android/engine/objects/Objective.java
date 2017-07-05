@@ -18,6 +18,9 @@ public class Objective {
     private Double lat;
     private Double lon;
 
+    private Boolean completed = false;
+    private String completedTime;
+
     public Objective(JSONObject object){
         if (object == null){
             return;
@@ -47,5 +50,9 @@ public class Objective {
 
     public String getLocation(){
         return lat + " " + lon;
+    }
+
+    public Boolean getCompleted(){
+        return completed;
     }
 }

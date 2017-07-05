@@ -166,6 +166,14 @@ public class LoginActivity extends AppCompatActivity {
                     //do validation here
                     if(gameData.has("status") && gameData.getInt("status") == 200 && gameData.has("data")){
                         Engine.game().storeGameData(gameData, gameCode);
+                        //TODO request user data and set up socket
+                        if(Engine.data().getUserGameKey().equals(gameCode)){
+                            //TODO returning user
+                        } else {
+                            Engine.socket().openSocket();
+                        }
+
+
                         onInitializationSuccess();
                     } else {
                         onInitializationError();

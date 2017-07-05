@@ -42,4 +42,8 @@ public class ObjectiveManager extends Manager {
     public ArrayList<Objective> getObjectives(){
         return userObjectives;
     }
+
+    private void sortObjectives(){
+        //TODO: sort objective algorithm
+    }
 }

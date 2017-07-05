@@ -2,7 +2,6 @@ package com.yan.sh.sh_android.ui.ObjectiveScrollView;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,15 +25,13 @@ public class ObjectiveAdapter extends RecyclerView.Adapter<ObjectiveAdapter.Obje
 
     public class ObjectiveHolder extends RecyclerView.ViewHolder {
 
-        public TextView title;
+        public TextView description;
         public TextView name;
-        public TextView surname;
 
         public ObjectiveHolder(View v){
             super(v);
-            title = (TextView) v.findViewById(R.id.title);
+            description = (TextView) v.findViewById(R.id.title);
             name  = (TextView) v.findViewById(R.id.txtName);
-            surname = (TextView) v.findViewById(R.id.txtSurname);
         }
     }
 
@@ -51,8 +48,7 @@ public class ObjectiveAdapter extends RecyclerView.Adapter<ObjectiveAdapter.Obje
         Objective objective = objectives.get(position);
         Timber.i("on bind");
         holder.name.setText(objective.getName());
-        holder.title.setText(objective.getDescription());
-        holder.surname.setText(objective.getLocation());
+        holder.description.setText(objective.getDescription());
     }
 
     @Override

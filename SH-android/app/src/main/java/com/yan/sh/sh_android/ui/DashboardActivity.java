@@ -7,9 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.yan.sh.sh_android.R;
 import com.yan.sh.sh_android.engine.Engine;
+import com.yan.sh.sh_android.engine.objects.Objective;
 import com.yan.sh.sh_android.ui.ObjectiveScrollView.ObjectiveAdapter;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -29,6 +31,8 @@ public class DashboardActivity extends AppCompatActivity {
 
         ObjectiveAdapter objectiveAdapter = new ObjectiveAdapter(this, Engine.objective().getObjectives());
         recyclerView.setAdapter(objectiveAdapter);
+
+        calculateUI();
     }
 
     @Override
@@ -41,5 +45,20 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    private void calculateUI(){
+        //TODO: add time calculation
+
+        //uncompleted objectives calculation
+        int uncompletedCount = 0;
+        for(Objective objective : Engine.objective().getObjectives()){
+            if(!objective.getCompleted()){
+                uncompletedCount++;
+            }
+        }
+
+        TextView objectiveCount = (TextView) findViewById(R.id.tv_objectives_remaining);
+        objectiveCount.setText("Objectives Remaining: " + uncompletedCount);
     }
 }

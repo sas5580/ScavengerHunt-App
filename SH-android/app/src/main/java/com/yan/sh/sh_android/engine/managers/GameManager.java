@@ -48,4 +48,6 @@ public class GameManager extends Manager {
     public boolean initialized(){
         return initalized;
     }
+
+    //TODO if new game is different from cached game id, delete the cached user information
 }

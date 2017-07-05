@@ -1,5 +1,6 @@
 package com.yan.sh.sh_android.engine.managers;
 
+import java.net.URISyntaxException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -9,6 +10,9 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import timber.log.Timber;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
 
 /**
  * Created by yan on 6/11/17.
@@ -45,16 +49,18 @@ public class SocketManager extends Manager {
 
     WebSocket webSocket;
     ScheduledExecutorService serialQueue;
+    private Socket socketIO;
 
     public SocketManager(){
         this.startup();
         serialQueue = Executors.newSingleThreadScheduledExecutor();
-        serialQueue.execute(new Runnable() {
-            @Override
-            public void run() {
-                openSocket();
-            }
-        });
+        //openSocket();
+        try{
+            socketIO = IO.socket(domain);
+            socketIO.connect();
+        } catch (URISyntaxException ex) {
+            Timber.e(ex, "Error initalizing socket");
+        }
     }
 
     //send completed objective to
@@ -72,13 +78,21 @@ public class SocketManager extends Manager {
         return true;
     }
 
-    private void openSocket(){
-        if(webSocket != null){
-            OkHttpClient client = new OkHttpClient();
-            SocketListener listener = new SocketListener();
-            Request request = new Request.Builder().url("ws://echo.websocket.org").build();
-            webSocket = client.newWebSocket(request, listener);
-            client.dispatcher().executorService().shutdown();
+    public void openSocket(){
+        Timber.i("on open socket");
+        if(serialQueue != null){
+            serialQueue.execute(new Runnable() {
+                @Override
+                public void run() {
+                    Timber.i("Attempting to connect to socket");
+                    OkHttpClient client = new OkHttpClient();
+                    SocketListener listener = new SocketListener();
+                    Request request = new Request.Builder().url("https://glacial-garden-48114.herokuapp.com/").build();
+                    webSocket = client.newWebSocket(request, listener);
+                    client.dispatcher().executorService().shutdown();
+                }
+            });
+
         }
     }
 
