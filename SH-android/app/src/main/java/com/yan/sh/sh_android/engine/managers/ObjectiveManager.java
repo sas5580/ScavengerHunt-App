@@ -27,6 +27,10 @@ public class ObjectiveManager extends Manager {
     }
 
     public void loadObjectives(JSONArray objectives){
+        if(userObjectives != null){
+            userObjectives.clear();
+        }
+
         for(int i = 0; i < objectives.length(); i++){
             try{
                 Objective objective = new Objective(objectives.getJSONObject(i));

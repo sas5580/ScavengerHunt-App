@@ -2,13 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/map"
+        android:id="@+id/item_map"
         android:title="Map"
-        android:icon="@drawable/ic_wifi_black_24dp"
+        android:icon="@drawable/ic_explore_white_24dp"
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/Stats"
-        android:title="Stats"/>
+        android:id="@+id/item_stats"
+        android:title="Stats"
+        android:icon="@drawable/ic_podium"
+        app:showAsAction="always"/>
 
 </menu>

@@ -59,6 +59,33 @@ public class SocketManager extends Manager {
         socketIO.emit(message, arguments);
     }
 
+    public void sendNewPlayerMessage(final String userName){
+        try{
+            JSONObject data = new JSONObject();
+            data.put("type", "player");
+            data.put("name", userName);
+            JSONObject json = new JSONObject();
+            json.put("data", data);
+            sendSocketMessage("connection", json);
+        } catch (JSONException ex) {
+            Timber.e("Error!");
+        }
+    }
+
+    public void sendReturningPlayerMessage(){
+        try {
+            JSONObject data = new JSONObject();
+            data.put("type", "player");
+            data.put("playerId", Engine.data().getUserId());
+            JSONObject json = new JSONObject();
+            json.put("data", data);
+            Engine.socket().sendSocketMessage("connection", json);
+        } catch (JSONException ex) {
+            Timber.e(ex, "JSON error");
+        }
+
+    }
+
     public void openSocket(){
         if(socketIO == null){
             try {
@@ -84,10 +111,11 @@ public class SocketManager extends Manager {
                 Timber.i("on connection");
                 try {
                     JSONObject json = (JSONObject) args[0];
-                    if(json != null){
-                        Timber.i(json.toString());
+                    if(json != null && json.has("data") && json.getJSONObject("data").has("id")){
                         Engine.user().setUuid(json.getJSONObject("data").getString("id"));
                         Engine.user().setGameKey(Engine.game().getGameCode());
+                    } else if (json != null && json.has("data") && json.getJSONObject("data").has("objectives complete")) {
+                        //TODO: process objectives complete
                     }
                 } catch (JSONException ex){
                     Timber.e(ex, "JSON exception");

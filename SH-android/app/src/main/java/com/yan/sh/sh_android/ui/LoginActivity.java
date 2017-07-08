@@ -176,23 +176,13 @@ public class LoginActivity extends AppCompatActivity {
                         Engine.socket().openSocket();
                         //if returning user
                         if(Engine.data().getUserGameKey().equals(gameCode)){
-                            JSONObject data = new JSONObject();
-                            data.put("type", "player");
-                            data.put("playerId", Engine.data().getUserId());
-                            JSONObject json = new JSONObject();
-                            json.put("data", data);
-
-                            Timber.i("Sending JSON : " + json.toString());
-                            Engine.socket().sendSocketMessage("connection", json);
-
+                            Engine.socket().sendReturningPlayerMessage();
                             Engine.user().loadUserManager();
                             onInitializationSuccess();
                         } else {
                             drawAlertDialog();
                         }
 
-
-                        //onInitializationSuccess();
                     } else {
                         onInitializationError();
                     }
@@ -246,17 +236,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String userName = input.getText().toString();
                         Engine.user().setNickName(userName);
-                        try{
-                            JSONObject data = new JSONObject();
-                            data.put("type", "player");
-                            data.put("name", userName);
-                            JSONObject json = new JSONObject();
-                            json.put("data", data);
-                            Engine.socket().sendSocketMessage("connection", json);
-                        } catch (JSONException ex) {
-                            Timber.e("Error!");
-                        }
-
+                        Engine.socket().sendNewPlayerMessage(userName);
                         //TODO : process objective completed
                         onInitializationSuccess();
                     }

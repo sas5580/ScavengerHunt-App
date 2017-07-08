@@ -1,5 +1,6 @@
 package com.yan.sh.sh_android.ui;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,14 +15,14 @@ import com.yan.sh.sh_android.engine.Engine;
 import com.yan.sh.sh_android.engine.objects.Objective;
 import com.yan.sh.sh_android.ui.ObjectiveScrollView.ObjectiveAdapter;
 
+import timber.log.Timber;
+
 public class DashboardActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-
-        //TODO : get user fragment if user has not been initialized
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_objective);
         recyclerView.setHasFixedSize(true);
@@ -44,12 +45,25 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        switch(item.getItemId()) {
+            case R.id.item_map:
+                Intent intent = new Intent(this, MapsActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.item_stats:
+                Timber.i("stats");
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     private void calculateUI(){
         //TODO: add time calculation
-
+        if(Engine.objective().getObjectives() == null){
+            return;
+        }
         //uncompleted objectives calculation
         int uncompletedCount = 0;
         for(Objective objective : Engine.objective().getObjectives()){
