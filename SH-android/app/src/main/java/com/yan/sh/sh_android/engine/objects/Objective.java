@@ -31,8 +31,8 @@ public class Objective {
             name = object.getString("name");
             description = object.getString("description");
 
-            lat = object.getJSONArray("location").getDouble(0);
-            lon = object.getJSONArray("location").getDouble(1);
+            lat = object.getJSONObject("location").getDouble("lat");
+            lon = object.getJSONObject("location").getDouble("long");
 
             Timber.i(name);
         }catch (JSONException err){

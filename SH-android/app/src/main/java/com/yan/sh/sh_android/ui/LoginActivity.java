@@ -3,15 +3,22 @@ package com.yan.sh.sh_android.ui;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,6 +33,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import io.socket.emitter.Emitter;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -163,18 +171,28 @@ public class LoginActivity extends AppCompatActivity {
                     //do some validation, make sure a valid game data gets sent
                     JSONObject gameData = new JSONObject(response.body().string());
 
-                    //do validation here
                     if(gameData.has("status") && gameData.getInt("status") == 200 && gameData.has("data")){
                         Engine.game().storeGameData(gameData, gameCode);
-                        //TODO request user data and set up socket
+                        Engine.socket().openSocket();
+                        //if returning user
                         if(Engine.data().getUserGameKey().equals(gameCode)){
-                            //TODO returning user
+                            JSONObject data = new JSONObject();
+                            data.put("type", "player");
+                            data.put("playerId", Engine.data().getUserId());
+                            JSONObject json = new JSONObject();
+                            json.put("data", data);
+
+                            Timber.i("Sending JSON : " + json.toString());
+                            Engine.socket().sendSocketMessage("connection", json);
+
+                            Engine.user().loadUserManager();
+                            onInitializationSuccess();
                         } else {
-                            Engine.socket().openSocket();
+                            drawAlertDialog();
                         }
 
 
-                        onInitializationSuccess();
+                        //onInitializationSuccess();
                     } else {
                         onInitializationError();
                     }
@@ -186,7 +204,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void onInitializationError(){
+    private void onInitializationError(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -200,7 +218,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void onInitializationSuccess(){
+    private void onInitializationSuccess(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -209,4 +227,43 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void drawAlertDialog(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                builder.setTitle("Create User Profile");
+
+                final EditText input = new EditText(LoginActivity.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                input.setGravity(Gravity.CENTER);
+                builder.setView(input);
+
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String userName = input.getText().toString();
+                        Engine.user().setNickName(userName);
+                        try{
+                            JSONObject data = new JSONObject();
+                            data.put("type", "player");
+                            data.put("name", userName);
+                            JSONObject json = new JSONObject();
+                            json.put("data", data);
+                            Engine.socket().sendSocketMessage("connection", json);
+                        } catch (JSONException ex) {
+                            Timber.e("Error!");
+                        }
+
+                        //TODO : process objective completed
+                        onInitializationSuccess();
+                    }
+                });
+                builder.show();
+            }
+        });
+    }
 }
+

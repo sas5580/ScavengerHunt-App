@@ -1,9 +1,19 @@
 package com.yan.sh.sh_android.engine.managers;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+
+import com.yan.sh.sh_android.engine.Engine;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URISyntaxException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import io.socket.emitter.Emitter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -23,84 +33,79 @@ public class SocketManager extends Manager {
 
     final private String domain = "https://glacial-garden-48114.herokuapp.com/";
 
-    public final class SocketListener extends WebSocketListener{
-        @Override
-        public void onOpen(WebSocket webSocket, Response response) {
-            super.onOpen(webSocket, response);
-            Timber.i("SOCKET MESSAGE:" + "CONNECTED");
-        }
 
-        @Override
-        public void onMessage(WebSocket webSocket, String text) {
-            super.onMessage(webSocket, text);
-            Timber.i("SOCKET MESSAGE:" + text);
-        }
-
-        @Override
-        public void onClosing(WebSocket webSocket, int code, String reason) {
-            super.onClosing(webSocket, code, reason);
-        }
-
-        @Override
-        public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            super.onFailure(webSocket, t, response);
-        }
-    }
-
-    WebSocket webSocket;
     ScheduledExecutorService serialQueue;
     private Socket socketIO;
+    private Context mContext;
 
-    public SocketManager(){
+    public SocketManager(Context context){
         this.startup();
         serialQueue = Executors.newSingleThreadScheduledExecutor();
-        //openSocket();
+        mContext = context;
+
         try{
             socketIO = IO.socket(domain);
-            socketIO.connect();
         } catch (URISyntaxException ex) {
             Timber.e(ex, "Error initalizing socket");
         }
     }
 
     //send completed objective to
-    public boolean sendSocketMessage(final String message){
-        if(webSocket == null || message == null)
-            return false;
-        if(serialQueue != null){
-            serialQueue.execute(new Runnable() {
-                @Override
-                public void run() {
-                    webSocket.send(message);
-                }
-            });
+    public void sendSocketMessage(final String message, final JSONObject arguments){
+        if(socketIO == null || !socketIO.connected()){
+            openSocket();
         }
-        return true;
+
+        socketIO.emit(message, arguments);
     }
 
     public void openSocket(){
-        Timber.i("on open socket");
-        if(serialQueue != null){
-            serialQueue.execute(new Runnable() {
-                @Override
-                public void run() {
-                    Timber.i("Attempting to connect to socket");
-                    OkHttpClient client = new OkHttpClient();
-                    SocketListener listener = new SocketListener();
-                    Request request = new Request.Builder().url("https://glacial-garden-48114.herokuapp.com/").build();
-                    webSocket = client.newWebSocket(request, listener);
-                    client.dispatcher().executorService().shutdown();
-                }
-            });
-
+        if(socketIO == null){
+            try {
+                socketIO = IO.socket(domain);
+            } catch (URISyntaxException ex) {
+                Timber.e(ex, "URI error");
+            }
         }
+
+        if(socketIO.connected()){
+            return;
+        }
+
+        socketIO.connect();
+        socketIO.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
+            @Override
+            public void call(Object... args) {
+                Timber.i("Connected");
+            }
+        }).on("connection", new Emitter.Listener(){
+            @Override
+            public void call(Object... args) {
+                Timber.i("on connection");
+                try {
+                    JSONObject json = (JSONObject) args[0];
+                    if(json != null){
+                        Timber.i(json.toString());
+                        Engine.user().setUuid(json.getJSONObject("data").getString("id"));
+                        Engine.user().setGameKey(Engine.game().getGameCode());
+                    }
+                } catch (JSONException ex){
+                    Timber.e(ex, "JSON exception");
+                }
+
+            }
+        });
     }
 
-    private void closeSocket(){
-        if(webSocket == null)
+    public void closeSocket(){
+        if(socketIO == null || !socketIO.connected()){
             return;
-        webSocket.close(1000, "Expected Shutdown");
-        webSocket = null;
+        }
+
+        socketIO.off();
+        socketIO.disconnect();
+        socketIO.close();
+        socketIO = null;
     }
 
     @Override

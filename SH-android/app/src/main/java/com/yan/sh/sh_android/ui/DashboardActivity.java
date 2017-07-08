@@ -61,4 +61,10 @@ public class DashboardActivity extends AppCompatActivity {
         TextView objectiveCount = (TextView) findViewById(R.id.tv_objectives_remaining);
         objectiveCount.setText("Objectives Remaining: " + uncompletedCount);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Engine.socket().closeSocket();
+    }
 }

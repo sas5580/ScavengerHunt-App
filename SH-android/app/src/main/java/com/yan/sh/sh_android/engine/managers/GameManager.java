@@ -20,7 +20,7 @@ import timber.log.Timber;
 
 public class GameManager extends Manager {
 
-    private boolean initalized;
+    private boolean initalized = false;
     private String startTime;
     private String gameCode;
 
@@ -29,17 +29,20 @@ public class GameManager extends Manager {
     }
 
     public void storeGameData(JSONObject data, String newGameCode){
-        if(data == null){
+        if(data == null || newGameCode == null){
+            return;
+        }
+
+        if(gameCode != null && gameCode.equals(newGameCode) && initalized){
             return;
         }
 
         gameCode = newGameCode;
-
         try{
             JSONArray objectives = data.getJSONArray("data");
             Engine.objective().loadObjectives(objectives);
-            initalized = true;
             Engine.data().saveGameData(gameCode);
+            initalized = true;
         }catch(JSONException ex){
             Timber.e(ex, "Json error");
         }
@@ -49,5 +52,8 @@ public class GameManager extends Manager {
         return initalized;
     }
 
-    //TODO if new game is different from cached game id, delete the cached user information
+    public String getGameCode(){
+        return gameCode;
+    }
+
 }

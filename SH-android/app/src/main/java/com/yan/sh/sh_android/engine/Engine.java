@@ -96,7 +96,7 @@ public class Engine {
             network = new NetworkManager();
         }
         if(socket == null) {
-            socket = new SocketManager();
+            socket = new SocketManager(context);
         }
         if(user == null){
             user = new UserManager();
