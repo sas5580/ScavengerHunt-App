@@ -49,10 +49,6 @@ public class Objective {
         return description;
     }
 
-    public String getLocation(){
-        return lat + " " + lon;
-    }
-
     public String getObjectiveId(){
         return objectiveId;
     }
@@ -76,5 +72,13 @@ public class Objective {
     public void setAsCompleted(Long completionTime){
         this.completed = true;
         this.completedTime = completionTime;
+    }
+
+    public Long getCompletedTime(){
+        return completedTime;
+    }
+
+    public String getPictureUrl(){
+        return pictureUrl;
     }
 }

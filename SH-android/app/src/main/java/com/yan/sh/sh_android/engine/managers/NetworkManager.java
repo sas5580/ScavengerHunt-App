@@ -35,4 +35,12 @@ public class NetworkManager extends Manager {
 
         client.newCall(request).enqueue(callback);
     }
+
+    public void getRankData(String userId, String gameId, Callback callback){
+        Request requst = new Request.Builder()
+                                .url(domain + "api/player_rank/?game_id=" + gameId + "&&player_id=" + userId)
+                                .build();
+
+        client.newCall(requst).enqueue(callback);
+    }
 }

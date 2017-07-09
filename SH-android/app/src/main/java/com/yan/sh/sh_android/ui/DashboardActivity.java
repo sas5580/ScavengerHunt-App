@@ -22,7 +22,6 @@ import com.yan.sh.sh_android.engine.Engine;
 import com.yan.sh.sh_android.engine.objects.Objective;
 import com.yan.sh.sh_android.ui.ObjectiveScrollView.ObjectiveAdapter;
 
-import com.cloudinary.android.*;
 import com.yan.sh.sh_android.util.Utilities;
 
 import timber.log.Timber;
@@ -79,6 +78,7 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity(intentStats);
                 break;
             default:
+                super.onOptionsItemSelected(item);
                 break;
         }
         return true;
@@ -103,8 +103,8 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        //Engine.socket().closeSocket();
         super.onPause();
-        Engine.socket().closeSocket();
     }
 
     @Override

@@ -179,9 +179,7 @@ public class LoginActivity extends AppCompatActivity {
                         Engine.socket().openSocket();
                         //if returning user
                         if(Engine.data().getUserGameKey().equals(gameCode)){
-                            Engine.socket().sendReturningPlayerMessage();
-                            Engine.user().loadUserManager();
-                            onInitializationSuccess();
+                            drawChangeUserDialog();
                         } else {
                             drawAlertDialog();
                         }
@@ -221,6 +219,32 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void drawChangeUserDialog(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                builder.setTitle("Returning as " + Engine.data().getUserName() + "?");
+                builder.setMessage("Press no to join as new user.");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Engine.socket().sendReturningPlayerMessage();
+                        Engine.user().loadUserManager();
+                        onInitializationSuccess();
+                    }
+                });
+                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        drawAlertDialog();
+                    }
+                });
+                builder.show();
+            }
+        });
+    }
+
     private void drawAlertDialog(){
         runOnUiThread(new Runnable() {
             @Override
@@ -233,14 +257,12 @@ public class LoginActivity extends AppCompatActivity {
                 input.setGravity(Gravity.CENTER);
                 builder.setView(input);
 
-
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String userName = input.getText().toString();
                         Engine.user().setNickName(userName);
                         Engine.socket().sendNewPlayerMessage(userName);
-                        //TODO : process objective completed
                         onInitializationSuccess();
                     }
                 });

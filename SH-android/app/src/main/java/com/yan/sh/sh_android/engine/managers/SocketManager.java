@@ -1,10 +1,11 @@
 package com.yan.sh.sh_android.engine.managers;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.yan.sh.sh_android.engine.Engine;
+import com.yan.sh.sh_android.engine.objects.Objective;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,11 +15,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import io.socket.emitter.Emitter;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
 import timber.log.Timber;
 
 import io.socket.client.IO;
@@ -32,7 +28,6 @@ import io.socket.client.Socket;
 public class SocketManager extends Manager {
 
     final private String domain = "https://glacial-garden-48114.herokuapp.com/";
-
 
     ScheduledExecutorService serialQueue;
     private Socket socketIO;
@@ -53,10 +48,16 @@ public class SocketManager extends Manager {
     //send completed objective to
     public void sendSocketMessage(final String message, final JSONObject arguments){
         if(socketIO == null || !socketIO.connected()){
+            closeSocket();
+            Timber.i("open socket");
             openSocket();
         }
-
-        socketIO.emit(message, arguments);
+        if(arguments == null){
+            socketIO.emit(message);
+        } else {
+            socketIO.emit(message, arguments);
+        }
+       ;
     }
 
     public void sendNewPlayerMessage(final String userName){
@@ -86,6 +87,20 @@ public class SocketManager extends Manager {
 
     }
 
+    public void sendCompletedObjective(Objective objective){
+        try{
+            JSONObject data = new JSONObject();
+            data.put("objectiveId", objective.getObjectiveId());
+            data.put("time", objective.getCompletedTime());
+            data.put("url", objective.getPictureUrl());
+            JSONObject json = new JSONObject();
+            json.put("data", data);
+            sendSocketMessage("objective", json);
+        } catch (JSONException ex){
+            Timber.e(ex, "JSON error!");
+        }
+    }
+
     public void openSocket(){
         if(socketIO == null){
             try {
@@ -100,6 +115,17 @@ public class SocketManager extends Manager {
         }
 
         socketIO.connect();
+        try {
+            JSONObject data = new JSONObject();
+            data.put("type", "player");
+            data.put("playerId", Engine.data().getUserId());
+            JSONObject json = new JSONObject();
+            json.put("data", data);
+            socketIO.emit("connection", json);
+        } catch (JSONException ex) {
+            Timber.e(ex, "JSON error");
+        }
+
         socketIO.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
             @Override
             public void call(Object... args) {
@@ -115,12 +141,32 @@ public class SocketManager extends Manager {
                         Engine.user().setUuid(json.getJSONObject("data").getString("id"));
                         Engine.user().setGameKey(Engine.game().getGameCode());
                     } else if (json != null && json.has("data") && json.getJSONObject("data").has("objectives complete")) {
-                        //TODO: process objectives complete
+                        Timber.i(json.toString());
+                        Engine.objective().updateObjectives(json.getJSONObject("data").getJSONArray("objectives complete"));
                     }
                 } catch (JSONException ex){
                     Timber.e(ex, "JSON exception");
                 }
-
+            }
+        }).on("rank", new Emitter.Listener(){
+            @Override
+            public void call(Object... args) {
+                Timber.i("on rank");
+                try {
+                    JSONObject json = (JSONObject) args[0];
+                    Integer rank = json.getJSONObject("data").getInt("rank");
+                    Integer players = json.getJSONObject("data").getInt("num players");
+                    if(Engine.game().setRank(rank, players)){
+                        onRankUpdate();
+                    }
+                } catch (JSONException ex){
+                    Timber.e(ex, "JSON error!");
+                }
+            }
+        }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Timber.i("disconnecting!");
             }
         });
     }
@@ -140,5 +186,14 @@ public class SocketManager extends Manager {
     public void shutdown() {
         super.shutdown();
         closeSocket();
+    }
+
+    private void onRankUpdate(){
+        Intent rankUpdate = new Intent();
+        rankUpdate.setAction("RANK_CHANGE");
+
+        //send local broadcast here
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(mContext);
+        localBroadcastManager.sendBroadcast(rankUpdate);
     }
 }

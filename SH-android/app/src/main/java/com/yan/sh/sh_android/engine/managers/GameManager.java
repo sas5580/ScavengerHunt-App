@@ -23,6 +23,8 @@ public class GameManager extends Manager {
     private boolean initalized = false;
     private String startTime;
     private String gameCode;
+    private Integer rank;
+    private Integer numPlayers;
 
     public GameManager(){
         this.startup();
@@ -30,10 +32,6 @@ public class GameManager extends Manager {
 
     public void storeGameData(JSONObject data, String newGameCode){
         if(data == null || newGameCode == null){
-            return;
-        }
-
-        if(gameCode != null && gameCode.equals(newGameCode) && initalized){
             return;
         }
 
@@ -54,6 +52,23 @@ public class GameManager extends Manager {
 
     public String getGameCode(){
         return gameCode;
+    }
+
+    public Boolean setRank(Integer rank, Integer players){
+        if(rank != null && players !=null && rank <= players){
+            this.rank = rank;
+            this.numPlayers = players;
+            return true;
+        }
+        return false;
+    }
+
+    public String createRankText(){
+        if(rank == null || numPlayers == null){
+            return "";
+        }
+
+        return Integer.toString(rank) + " / " + Integer.toString(numPlayers);
     }
 
 }

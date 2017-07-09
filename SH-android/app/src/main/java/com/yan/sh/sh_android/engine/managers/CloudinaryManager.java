@@ -1,22 +1,16 @@
 package com.yan.sh.sh_android.engine.managers;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.Handler;
 
 import com.cloudinary.Cloudinary;
 import com.yan.sh.sh_android.R;
 import com.yan.sh.sh_android.engine.Engine;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import timber.log.Timber;
@@ -53,7 +47,7 @@ public class CloudinaryManager extends Manager {
                 try{
                     FileInputStream is = new FileInputStream(new File(url));
                     final Map response = cloudinary.uploader().upload(is, options);
-                    //Timber.i(response.toString());
+                   ;
                     if(response.containsKey("url")){
                         Timber.i(response.get("url").toString());
                         Engine.objective().completingObjective(objectiveId, response.get("url").toString());

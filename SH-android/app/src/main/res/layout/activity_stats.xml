@@ -29,6 +29,17 @@
             android:paddingBottom="20dp"/>
 
     </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Recycler here -->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_objective_completed"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </ScrollView>
 
 
 </LinearLayout>

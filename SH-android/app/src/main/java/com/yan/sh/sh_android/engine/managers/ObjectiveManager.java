@@ -4,17 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.yan.sh.sh_android.engine.Engine;
 import com.yan.sh.sh_android.engine.objects.Objective;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
 
 import timber.log.Timber;
 
@@ -96,7 +93,31 @@ public class ObjectiveManager extends Manager {
             }
         }
 
-        //TODO: send socket message to server
+        Engine.socket().sendCompletedObjective(completedObjective);
+    }
+
+    public void updateObjectives(JSONArray objectives){
+        for(int i = 0; i < objectives.length(); i++){
+            try{
+                JSONObject objective = objectives.getJSONObject(i);
+                for(int j = 0; j < userObjectives.size() ; j++){
+                    if(userObjectives.get(j).getObjectiveId().equals(objective.getString("id"))){
+                        Objective complete = userObjectives.get(j);
+                        complete.setAsCompleted(objective.getLong("time"));
+                        complete.setPictureUrl(objective.getString("url").replace("\\", ""));
+                        Timber.i("new url : " + complete.getPictureUrl());
+
+                        userObjectives.remove(j);
+                        userObjectives.add(complete);
+                        break;
+                    }
+                }
+            } catch (JSONException ex){
+                Timber.e(ex, "JSON error");
+            }
+        }
+
+        onObjectiveUpdate();
     }
 
     private void onObjectiveUpdate(){
