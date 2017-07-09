@@ -44,7 +44,7 @@
         <activity
             android:name=".ui.DashboardActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat"></activity>
+            android:theme="@style/Theme.AppCompat" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -60,6 +60,13 @@
         <activity
             android:name=".ui.MapsActivity"
             android:label="@string/title_activity_maps">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.yan.sh.sh_android.ui.DashboardActivity" />
+        </activity>
+        <activity android:name=".ui.StatsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.yan.sh.sh_android.ui.DashboardActivity" />

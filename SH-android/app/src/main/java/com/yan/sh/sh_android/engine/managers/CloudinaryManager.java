@@ -6,6 +6,7 @@ import android.os.Handler;
 
 import com.cloudinary.Cloudinary;
 import com.yan.sh.sh_android.R;
+import com.yan.sh.sh_android.engine.Engine;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,7 +39,7 @@ public class CloudinaryManager extends Manager {
         this.startup();
     }
 
-    public void uploadPicture(final String url){
+    public void uploadPicture(final String url, final String fileName, final String objectiveId){
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
@@ -48,10 +49,16 @@ public class CloudinaryManager extends Manager {
                 }
 
                 Map options = new HashMap();
-                options.put("public_id", "test2");
+                options.put("public_id", fileName);
                 try{
                     FileInputStream is = new FileInputStream(new File(url));
-                    Timber.i(cloudinary.uploader().upload(is, options).toString());
+                    final Map response = cloudinary.uploader().upload(is, options);
+                    //Timber.i(response.toString());
+                    if(response.containsKey("url")){
+                        Timber.i(response.get("url").toString());
+                        Engine.objective().completingObjective(objectiveId, response.get("url").toString());
+                    }
+
                 } catch (IOException ex){
                     Timber.e(ex, "Upload error!");
                 }

@@ -45,5 +45,9 @@ public class UserManager extends Manager {
         this.nickName = Engine.data().getUserName();
     }
 
+    public String getUuid(){
+        return uuid;
+    }
+
 
 }

@@ -19,7 +19,8 @@ public class Objective {
     private Double lon;
 
     private Boolean completed = false;
-    private String completedTime;
+    private Long completedTime;
+    private String pictureUrl;
 
     public Objective(JSONObject object){
         if (object == null){
@@ -66,5 +67,14 @@ public class Objective {
 
     public Boolean getCompleted(){
         return completed;
+    }
+
+    public void setPictureUrl(String pictureUrl){
+        this.pictureUrl = pictureUrl;
+    }
+
+    public void setAsCompleted(Long completionTime){
+        this.completed = true;
+        this.completedTime = completionTime;
     }
 }

@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.yan.sh.sh_android.R;
 import com.yan.sh.sh_android.engine.Engine;
@@ -46,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button returnToLastGame;
     private ImageView wifi;
     private ImageView location;
+    private TextView error;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         returnToLastGame = (Button) findViewById(R.id.bt_join_last_game);
         wifi = (ImageView) findViewById(R.id.iv_wifi);
         location = (ImageView) findViewById(R.id.iv_location);
+        error = (TextView) findViewById(R.id.tv_error_msg);
 
         joinGame.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,12 +127,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void refreshLoginUI(){
-        if(Engine.data().getGameData().equals("")) {
-            returnToLastGame.setEnabled(false);
-        } else {
-            returnToLastGame.setEnabled(true);
-        }
-
         if(!Engine.hardware().hasNetworkAccess()) {
             wifi.setVisibility(View.INVISIBLE);
         } else {
@@ -144,8 +141,14 @@ public class LoginActivity extends AppCompatActivity {
 
         if(!Engine.hardware().isLocationEnabled() || !Engine.hardware().hasNetworkAccess()){
             joinGame.setEnabled(false);
+            error.setVisibility(View.VISIBLE);
+            returnToLastGame.setEnabled(false);
         } else {
             joinGame.setEnabled(true);
+            error.setVisibility(View.GONE);
+            if(!Engine.data().getGameData().equals("")) {
+                returnToLastGame.setEnabled(true);
+            }
         }
     }
 
@@ -245,5 +248,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-}
 
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onLocationChange);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNetworkChange);
+        super.onDestroy();
+    }
+}

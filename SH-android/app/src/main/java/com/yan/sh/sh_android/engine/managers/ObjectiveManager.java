@@ -1,5 +1,9 @@
 package com.yan.sh.sh_android.engine.managers;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
+
 import com.yan.sh.sh_android.engine.objects.Objective;
 
 import org.json.JSONArray;
@@ -8,6 +12,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,10 +25,12 @@ import timber.log.Timber;
 public class ObjectiveManager extends Manager {
 
     private ArrayList<Objective> userObjectives;
+    private Context mContext;
 
-    public ObjectiveManager(){
+    public ObjectiveManager(Context context){
         this.startup();
         userObjectives = new ArrayList<>();
+        mContext = context;
     }
 
     public void loadObjectives(JSONArray objectives){
@@ -69,7 +76,35 @@ public class ObjectiveManager extends Manager {
         return userObjectives.get(index);
     }
 
-    private void sortObjectives(){
-        //TODO: sort objective algorithm
+    public void completingObjective(String objectiveId, String url){
+        Objective completedObjective = getObjectiveById(objectiveId);
+
+        if(completedObjective == null){
+            Timber.w("Null objective?");
+            return;
+        }
+
+        completedObjective.setPictureUrl(url);
+        completedObjective.setAsCompleted(System.currentTimeMillis()/1000);
+
+        for(int i = 0; i < userObjectives.size() ; i++){
+            if(userObjectives.get(i).getObjectiveId().equals(objectiveId)){
+                userObjectives.remove(i);
+                userObjectives.add(completedObjective);
+                onObjectiveUpdate();
+                break;
+            }
+        }
+
+        //TODO: send socket message to server
+    }
+
+    private void onObjectiveUpdate(){
+        Intent objectiveChange = new Intent();
+        objectiveChange.setAction("OBJECTIVE_CHANGE");
+
+        //send local broadcast
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(mContext);
+        localBroadcastManager.sendBroadcast(objectiveChange);
     }
 }

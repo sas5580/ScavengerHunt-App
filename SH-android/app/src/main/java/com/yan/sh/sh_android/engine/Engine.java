@@ -106,7 +106,7 @@ public class Engine {
             user = new UserManager();
         }
         if(objective == null){
-            objective = new ObjectiveManager();
+            objective = new ObjectiveManager(context);
         }
         if(cloud == null){
             cloud = new CloudinaryManager(context);

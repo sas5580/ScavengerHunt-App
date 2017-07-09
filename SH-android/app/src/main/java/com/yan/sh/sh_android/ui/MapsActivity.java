@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,6 +39,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Objective focusedObjective;
     private final static int REQUEST_LOCATION_ID = 99;
     private ArrayList<LatLng> latLngArrayList;
+    private final static int REFOCUS_ID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +56,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0,REFOCUS_ID,0,"Re-focus");
+        return true;
+    }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish();
+                return true;
+            case REFOCUS_ID:
+                zoomToBounds();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
