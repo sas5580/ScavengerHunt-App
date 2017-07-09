@@ -52,6 +52,10 @@ public class Objective {
         return lat + " " + lon;
     }
 
+    public String getObjectiveId(){
+        return objectiveId;
+    }
+
     public double getLat(){
         return lat;
     }

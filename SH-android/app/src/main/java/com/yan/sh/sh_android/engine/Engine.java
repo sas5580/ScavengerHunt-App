@@ -3,6 +3,7 @@ package com.yan.sh.sh_android.engine;
 import android.content.Context;
 
 import com.yan.sh.sh_android.engine.managers.BroadcastManager;
+import com.yan.sh.sh_android.engine.managers.CloudinaryManager;
 import com.yan.sh.sh_android.engine.managers.DataManager;
 import com.yan.sh.sh_android.engine.managers.GameManager;
 import com.yan.sh.sh_android.engine.managers.HardwareManager;
@@ -26,6 +27,7 @@ public class Engine {
     private UserManager user;
     private ObjectiveManager objective;
     private BroadcastManager broadcast;
+    private CloudinaryManager cloud;
 
     private boolean started = false;
 
@@ -74,6 +76,8 @@ public class Engine {
 
     public static BroadcastManager broadcast() { return Engine.instance().broadcast; }
 
+    public static CloudinaryManager cloud() { return Engine.instance().cloud; }
+
     private void instanceStartup(Context context){
         if(started){
             return;
@@ -103,6 +107,9 @@ public class Engine {
         }
         if(objective == null){
             objective = new ObjectiveManager();
+        }
+        if(cloud == null){
+            cloud = new CloudinaryManager(context);
         }
     }
 
@@ -136,6 +143,9 @@ public class Engine {
 
         objective.shutdown();
         objective = null;
+
+        cloud.shutdown();
+        cloud = null;
     }
 
     public static boolean managersInitialized(){
@@ -143,14 +153,15 @@ public class Engine {
             return false;
         }
 
-        if(     Engine.instance().broadcast != null && Engine.instance().broadcast.isStarted()&&
-                Engine.instance().data != null      && Engine.instance().data.isStarted()     &&
-                Engine.instance().game != null      && Engine.instance().game.isStarted()     &&
-                Engine.instance().hardware != null  && Engine.instance().hardware.isStarted() &&
-                Engine.instance().network != null   && Engine.instance().network.isStarted()  &&
-                Engine.instance().socket != null    && Engine.instance().socket.isStarted()   &&
-                Engine.instance().user != null      && Engine.instance().user.isStarted()     &&
-                Engine.instance().objective != null && Engine.instance().objective.isStarted()) {
+        if(     broadcast() != null && broadcast().isStarted()&&
+                data() != null      && data().isStarted()     &&
+                game() != null      && game().isStarted()     &&
+                hardware() != null  && hardware().isStarted() &&
+                network() != null   && network().isStarted()  &&
+                socket() != null    && socket().isStarted()   &&
+                user() != null      && user().isStarted()     &&
+                objective() != null && objective().isStarted()&&
+                cloud() != null     && cloud().isStarted()) {
             return true;
         }
         return false;

@@ -1,6 +1,7 @@
 package com.yan.sh.sh_android.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +15,9 @@ import com.yan.sh.sh_android.R;
 import com.yan.sh.sh_android.engine.Engine;
 import com.yan.sh.sh_android.engine.objects.Objective;
 import com.yan.sh.sh_android.ui.ObjectiveScrollView.ObjectiveAdapter;
+
+import com.cloudinary.android.*;
+import com.yan.sh.sh_android.util.Utilities;
 
 import timber.log.Timber;
 
@@ -80,5 +84,21 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Engine.socket().closeSocket();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Timber.i("request Code " + requestCode);
+
+        Objective captured = Engine.objective().getObjectiveByIndex(requestCode);
+        if(captured == null || !data.hasExtra("data")){
+            Timber.w("Activity result captured is not an objective or no image???");
+            return;
+        }
+
+        Bitmap image = (Bitmap) data.getExtras().get("data");
+        String url = Utilities.saveBitmap(image, this, "test1.jpg");
+        Engine.cloud().uploadPicture(url);
     }
 }

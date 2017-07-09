@@ -47,6 +47,28 @@ public class ObjectiveManager extends Manager {
         return userObjectives;
     }
 
+    public Objective getObjectiveById(String id){
+        if(userObjectives == null){
+            return null;
+        }
+
+        for(Objective objective : userObjectives){
+            if(objective.getObjectiveId().equals(id)){
+                return objective;
+            }
+        }
+
+        return null;
+    }
+
+    public Objective getObjectiveByIndex(int index){
+        if(userObjectives == null || index < 0 || index >= userObjectives.size()){
+            return null;
+        }
+
+        return userObjectives.get(index);
+    }
+
     private void sortObjectives(){
         //TODO: sort objective algorithm
     }

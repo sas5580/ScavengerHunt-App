@@ -1,8 +1,11 @@
 package com.yan.sh.sh_android.ui;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -16,20 +19,25 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.yan.sh.sh_android.R;
 import com.yan.sh.sh_android.engine.Engine;
 import com.yan.sh.sh_android.engine.objects.Objective;
+import com.yan.sh.sh_android.util.Utilities;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 import timber.log.Timber;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private String id;
+    private Objective focusedObjective;
     private final static int REQUEST_LOCATION_ID = 99;
+    private ArrayList<LatLng> latLngArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +52,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-        //TODO : process for just one objective
-        //intent.hasExtra("objective");
+
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // app icon in action bar clicked; goto parent activity.
                 this.finish();
                 return true;
             default:
@@ -63,11 +68,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setPadding(0, Utilities.dpToPixels(20, this), 0, 0);
 
-        // Add a marker in Sydney and move the camera
+        Intent intent = getIntent();
+        if(intent.hasExtra("id")){
+            focusedObjective = Engine.objective().getObjectiveById(intent.getStringExtra("id"));
+            Timber.i(intent.getStringExtra("id"));
+            getActionBar().setTitle(focusedObjective.getName());
+        }
+
         createObjectiveMarkers();
         enableLocation();
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        zoomToBounds();
     }
 
     private void enableLocation(){
@@ -94,16 +106,107 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void createObjectiveMarkers(){
+        if(focusedObjective != null){
+            LatLng latLng = new LatLng(focusedObjective.getLat(), focusedObjective.getLon());
+            mMap.addMarker(new MarkerOptions().position(latLng).title(focusedObjective.getName()));
+            return;
+        }
+
         ArrayList<Objective> objectives = Engine.objective().getObjectives();
         if(objectives == null || objectives.size() <= 0){
             return;
         }
 
+        latLngArrayList = new ArrayList<>();
         for(Objective objective : objectives){
             if(!objective.getCompleted()){
                 LatLng latLng = new LatLng(objective.getLat(), objective.getLon());
                 mMap.addMarker(new MarkerOptions().position(latLng).title(objective.getName()));
+                latLngArrayList.add(latLng);
             }
         }
+    }
+
+    private void zoomToBounds(){
+        //check if we have a focused objective
+        if(focusedObjective != null){
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(focusedObjective.getLat(), focusedObjective.getLon()), 15));
+            return;
+        }
+
+        Double latTop = null;
+        Double latBot = null;
+        Double lonTop = null;
+        Double lonBot = null;
+        Location location = getLastKnownLocation();
+
+        if(location != null) {
+            latTop = location.getLatitude();
+            latBot = location.getLatitude();
+            lonTop = location.getLongitude();
+            lonBot = location.getLongitude();
+        }
+
+        if((latLngArrayList == null || latLngArrayList.size() <= 0) && location == null){
+            return;
+        }
+
+        if((location == null && latLngArrayList.size() == 1)){
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngArrayList.get(0)));
+            return;
+        }
+
+        for(LatLng latLng : latLngArrayList){
+            if(latTop == null){
+                latTop = latLng.latitude;
+                latBot = latLng.latitude;
+            } else if(latLng.latitude > latTop){
+                latTop = latLng.latitude;
+            } else if (latLng.latitude < latBot) {
+                latBot = latLng.latitude;
+            }
+
+            if(lonTop == null){
+                lonTop = latLng.longitude;
+                lonBot = latLng.longitude;
+            } else if(latLng.longitude > lonTop){
+                lonTop = latLng.longitude;
+            } else if (latLng.longitude < lonBot){
+                lonBot = latLng.longitude;
+            }
+        }
+        Timber.i(latTop.toString() + latBot.toString() + lonTop.toString() + lonBot.toString());
+        LatLng northEast = new LatLng(latTop, lonTop);
+        LatLng southWest = new LatLng(latBot, lonBot);
+
+        int padding = Utilities.dpToPixels(30, this);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(new LatLngBounds(southWest, northEast), padding));
+    }
+
+    private Location getLastKnownLocation() {
+        LocationManager mLocationManager;
+        mLocationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = mLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mMap.clear();
+        mMap = null;
+        latLngArrayList = null;
+        focusedObjective = null;
     }
 }
